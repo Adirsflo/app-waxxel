@@ -37,16 +37,23 @@ export default function PersistentPlayer({ track }) {
   }, []);
 
   // Playback stays paused on load. The first time the visitor interacts with
-  // the page (click, key or touch), playback starts for real. Scroll is
-  // deliberately excluded: browsers can restore/replay scroll position
-  // programmatically (e.g. on reload), which would start audio without the
-  // visitor actually doing anything.
+  // the page, playback starts for real. `wheel`/`touchmove` cover manual
+  // scrolling — unlike the generic `scroll` event, they only fire from real
+  // physical input, never from a browser programmatically restoring scroll
+  // position (that was the earlier bug: `scroll` fired on its own after a
+  // reload and started audio with nobody touching anything).
+  // One caveat that's a browser limitation, not something fixable here:
+  // per the web's autoplay policy, only click/tap/key presses are guaranteed
+  // to count as the "user gesture" required to start audio with sound —
+  // scrolling isn't in that list in most browsers, so `play()` from a wheel/
+  // touchmove handler can still be silently blocked. It's kept as a
+  // best-effort attempt; a click/tap always works as the reliable fallback.
   useEffect(() => {
     function startOnInteraction() {
       const audio = audioRef.current;
       if (audio && audio.paused) audio.play().catch(() => {});
     }
-    const events = ["pointerdown", "keydown", "touchstart"];
+    const events = ["pointerdown", "keydown", "touchstart", "wheel", "touchmove"];
     events.forEach((evt) => document.addEventListener(evt, startOnInteraction, { once: true, passive: true }));
     return () => events.forEach((evt) => document.removeEventListener(evt, startOnInteraction));
   }, []);
