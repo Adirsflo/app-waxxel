@@ -1,0 +1,45 @@
+# Decap CMS config — see web/DEPLOY.md for the full setup checklist
+# (GitHub OAuth App, Cloudflare Pages env vars, etc).
+#
+# Fill in `repo:` and `base_url:` once those exist — until then this
+# page will load but login will fail.
+
+backend:
+  name: github
+  repo: YOUR_GITHUB_USERNAME/YOUR_REPO_NAME # e.g. jesperlindnert/waxxel-web
+  branch: main
+  base_url: https://YOUR-OAUTH-WORKER-URL # the Cloudflare Pages Function origin, e.g. https://waxxel.pages.dev
+  auth_endpoint: api/auth
+
+media_folder: "public/assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "track"
+    label: "Bakgrundslåt"
+    files:
+      - name: "track"
+        label: "Bakgrundslåt"
+        file: "content/track.json"
+        fields:
+          - { label: "Titel", name: "title", widget: "string" }
+          - { label: "Artist", name: "artist", widget: "string" }
+          - { label: "Ljudfil", name: "audioFile", widget: "file", media_library: { config: { max_file_size: 100000000 } } }
+          - { label: "Standardvolym (%)", name: "defaultVolume", widget: "number", min: 0, max: 100, default: 15 }
+
+  - name: "events"
+    label: "Events"
+    files:
+      - name: "events"
+        label: "Events"
+        file: "content/events.json"
+        fields:
+          - label: "Events"
+            name: "events"
+            widget: "list"
+            summary: "{{name}} — {{date}}"
+            fields:
+              - { label: "Datum", name: "date", widget: "string", hint: "T.ex. 12 SEP 2026" }
+              - { label: "Namn", name: "name", widget: "string" }
+              - { label: "Plats", name: "venue", widget: "string" }
+              - { label: "Biljettlänk", name: "link", widget: "string", required: false }
