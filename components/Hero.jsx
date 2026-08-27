@@ -1,9 +1,10 @@
 import WaxxelLogo from "./WaxxelLogo";
+import { withBase } from "@/lib/basePath";
 
 export default function Hero() {
   return (
     <section className="hero" id="top">
-      <div className="hero__bg" style={{ backgroundImage: "url('/assets/images/hero-bg.jpg')" }} />
+      <div className="hero__bg" style={{ backgroundImage: `url('${withBase("/assets/images/hero-bg.jpg")}')` }} />
       <div className="hero__scrim" />
       <div className="hero__content">
         <WaxxelLogo className="hero__logo" />

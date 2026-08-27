@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PersistentPlayer from "@/components/PersistentPlayer";
+import { withBase } from "@/lib/basePath";
 
 const waxxelDisplay = localFont({
   src: "./fonts/Helvetica.ttf",
@@ -17,13 +18,14 @@ export const metadata = {
   title: "WÄXXEL — Techno",
   description: "WÄXXEL — mörk, mystisk techno. Lyssna, se kommande events och hör av dig.",
   icons: {
-    icon: "/favicon.svg",
+    icon: withBase("/favicon.svg"),
   },
 };
 
 function getTrack() {
   const file = path.join(process.cwd(), "content", "track.json");
-  return JSON.parse(fs.readFileSync(file, "utf-8"));
+  const track = JSON.parse(fs.readFileSync(file, "utf-8"));
+  return { ...track, audioFile: withBase(track.audioFile) };
 }
 
 export default function RootLayout({ children }) {
